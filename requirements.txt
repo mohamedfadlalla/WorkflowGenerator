@@ -1,3 +1,4 @@
-graphviz
 langchain
 langchain_groq
+streamlit
+graphviz
