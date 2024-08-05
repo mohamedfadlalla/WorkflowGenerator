@@ -4,16 +4,25 @@ import functions
 import os 
 from langchain_groq import ChatGroq
 
-# # setup groq api keys
-# from dotenv import load_dotenv
-# load_dotenv()
-# GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
-llm = ChatGroq(
+import platform
+
+if platform.system() == "Windows":
+    # setup groq api keys
+    from dotenv import load_dotenv
+    load_dotenv()
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+elif platform.system() == "Linux":
+    GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+    llm = ChatGroq(
     temperature=0,
     model_name="llama-3.1-8b-instant",
     groq_api_key=GROQ_API_KEY 
 )
+
+else:
+    raise OSError("Unsupported operating system")
+
+
 
 def streamlit_app(text):
     code = functions.get_workflow(text, llm)
@@ -24,7 +33,9 @@ def streamlit_app(text):
     return graph
 
 st.title("Method Section Workflow Generator")
+st.markdown("The Workflow Generator feature simplifies understanding research methodologies by creating visual workflows from the method sections of academic papers. Copy and past the method section of your paper, and our tool will generate a clear, step-by-step visualization of the research process, helping you quickly grasp the study's methodology.")
 
+st.markdown('*Please note: The Workflow Generator may produce inaccurate results. We appreciate your understanding and encourage you to provide feedback to help us improve.*')
 text = st.text_input("Enter method section")
 
 if st.button("Submit"):
